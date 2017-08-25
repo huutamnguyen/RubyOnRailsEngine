@@ -2,6 +2,7 @@ class OrganizationsController < ApplicationController
   before_action :set_organization, only: [:show, :edit, :update, :destroy]
   skip_before_action :verify_authenticity_token
 
+  include Reponsive
   # GET /organizations
   # GET /organizations.json
   def index
@@ -12,7 +13,7 @@ class OrganizationsController < ApplicationController
   # GET /organizations/1.json
   def show
     @organization = Organization.find(params[:id])
-    render json: @organization
+    render_json_object(@organization)
   end
 
   # GET /organizations/new
@@ -29,29 +30,20 @@ class OrganizationsController < ApplicationController
   # POST /organizations.json
   def create
     @organization = Organization.new(organization_params)
-
-    respond_to do |format|
-      if @organization.save
-        #format.html { redirect_to @organization, notice: 'Organization was successfully created.' }
-        format.json { render :show, status: :created, location: @organization }
-      else
-        #format.html { render :new }
-        format.json { render json: @organization.errors, status: :unprocessable_entity }
-      end
+    if @organization.save
+      render_json_object(@organization)
+    else
+      implement_status("create","error")
     end
   end
 
   # PATCH/PUT /organizations/1
   # PATCH/PUT /organizations/1.json
   def update
-    respond_to do |format|
-      if @organization.update(organization_params)
-        #format.html { redirect_to @organization, notice: 'Organization was successfully updated.' }
-        format.json { render :show, status: :ok, location: @organization }
-      else
-        #format.html { render :edit }
-        format.json { render json: @organization.errors, status: :unprocessable_entity }
-      end
+    if @organization.update(organization_params)
+      render_json_object(@organization)
+    else
+      implement_status("create","error")
     end
   end
 
@@ -59,10 +51,7 @@ class OrganizationsController < ApplicationController
   # DELETE /organizations/1.json
   def destroy
     @organization.destroy
-    respond_to do |format|
-      #format.html { redirect_to organizations_url, notice: 'Organization was successfully destroyed.' }
-      format.json { render json: {"status":"sucessfull"} }
-    end
+    implement_status("delete","successful")
   end
 
   private
