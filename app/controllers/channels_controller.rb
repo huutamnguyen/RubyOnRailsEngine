@@ -1,6 +1,7 @@
 class ChannelsController < ApplicationController
   before_action :set_channel, only: [:show, :edit, :update, :destroy]
   skip_before_action :verify_authenticity_token
+  include Reponsive
 
   # GET /channels
   # GET /channels.json
@@ -29,29 +30,20 @@ class ChannelsController < ApplicationController
   # POST /channels.json
   def create
     @channel = Channel.new(channel_params)
-
-    respond_to do |format|
-      if @channel.save
-        #format.html { redirect_to @channel, notice: 'Channel was successfully created.' }
-        format.json { render :show, status: :created, location: @channel }
-      else
-        #format.html { render :new }
-        format.json { render json: @channel.errors, status: :unprocessable_entity }
-      end
+    if @channel.save
+      render_json_object(@channel)
+    else
+      implement_status("Create","error")
     end
   end
 
   # PATCH/PUT /channels/1
   # PATCH/PUT /channels/1.json
   def update
-    respond_to do |format|
-      if @channel.update(channel_params)
-        #format.html { redirect_to @channel, notice: 'Channel was successfully updated.' }
-        format.json { render :show, status: :ok, location: @channel }
-      else
-        #format.html { render :edit }
-        format.json { render json: @channel.errors, status: :unprocessable_entity }
-      end
+    if @channel.update(channel_params)
+      render_json_object(@channel)
+    else
+      implement_status("Update","error")
     end
   end
 
@@ -59,10 +51,7 @@ class ChannelsController < ApplicationController
   # DELETE /channels/1.json
   def destroy
     @channel.destroy
-    respond_to do |format|
-      #format.html { redirect_to channels_url, notice: 'Channel was successfully destroyed.' }
-      format.json { render json: {"status":"sucessfull"} }
-    end
+    implement_status("Delete","successfull")
   end
 
   private
